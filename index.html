@@ -24,6 +24,18 @@
     </header>
 
     <main class="main">
+      <section class="meta-section">
+        <div class="meta-row">
+          <label for="comment" class="meta-label">Комментарий к сравнению</label>
+          <input type="text" id="comment" class="comment-input" placeholder="Например: до/после смены настроек виджета">
+        </div>
+        <div class="meta-row widget-token-row">
+          <label for="widgetToken" class="meta-label">Токен виджета</label>
+          <input type="text" id="widgetToken" class="token-input" placeholder="Оставь пустым — сравнивается весь JSON">
+          <span class="meta-hint">Только для режима JSON: показывается аналитика только этого виджета</span>
+        </div>
+      </section>
+
       <section class="inputs">
         <div class="panel">
           <div class="panel-header">
@@ -51,7 +63,10 @@
 
       <section class="diff-section" id="diffSection">
         <div class="diff-header">
-          <span>Различия</span>
+          <div class="diff-header-left">
+            <span>Различия</span>
+            <span class="diff-comment" id="diffComment"></span>
+          </div>
           <span class="diff-stats" id="diffStats"></span>
         </div>
         <div class="diff-container">

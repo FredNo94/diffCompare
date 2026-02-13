@@ -10,16 +10,62 @@
   var diffSection = document.getElementById('diffSection');
   var diffOutput = document.getElementById('diffOutput');
   var diffStats = document.getElementById('diffStats');
+  var diffComment = document.getElementById('diffComment');
+  var commentInput = document.getElementById('comment');
+  var widgetTokenInput = document.getElementById('widgetToken');
+
+  var TOKEN_KEYS = ['token', 'widgetToken', 'widget_id', 'widgetId', 'id'];
 
   function getMode() {
     return document.querySelector('input[name="mode"]:checked').value;
   }
 
-  function normalizeJson(str) {
+  function objectHasToken(obj, token) {
+    if (!obj || typeof obj !== 'object') return false;
+    return TOKEN_KEYS.some(function (k) {
+      return obj[k] === token;
+    });
+  }
+
+  function filterByWidgetToken(data, token) {
+    if (!token || typeof token !== 'string' || !token.trim()) return data;
+    token = token.trim();
+
+    function filterValue(val) {
+      if (val == null) return null;
+      if (Array.isArray(val)) {
+        var filtered = val.filter(function (item) {
+          return objectHasToken(item, token);
+        });
+        return filtered.length ? filtered : null;
+      }
+      if (typeof val === 'object') {
+        if (objectHasToken(val, token)) return val;
+        var out = {};
+        for (var key in val) {
+          if (!Object.prototype.hasOwnProperty.call(val, key)) continue;
+          var filtered = filterValue(val[key]);
+          if (filtered !== null && (Array.isArray(filtered) ? filtered.length > 0 : true)) {
+            out[key] = filtered;
+          }
+        }
+        return Object.keys(out).length ? out : null;
+      }
+      return null;
+    }
+
+    var result = filterValue(data);
+    return result !== null ? result : { _empty: 'Нет данных по токену «' + token + '»' };
+  }
+
+  function normalizeJson(str, widgetToken) {
     var s = str.trim();
     if (!s) return '';
     try {
       var parsed = JSON.parse(s);
+      if (widgetToken && getMode() === 'json') {
+        parsed = filterByWidgetToken(parsed, widgetToken);
+      }
       return JSON.stringify(parsed, null, 2);
     } catch (_) {
       return str;
@@ -28,12 +74,14 @@
 
   function getTextA() {
     var t = inputA.value.trim();
-    return getMode() === 'json' ? normalizeJson(t) : t;
+    var token = widgetTokenInput && widgetTokenInput.value ? widgetTokenInput.value.trim() : '';
+    return getMode() === 'json' ? normalizeJson(t, token) : t;
   }
 
   function getTextB() {
     var t = inputB.value.trim();
-    return getMode() === 'json' ? normalizeJson(t) : t;
+    var token = widgetTokenInput && widgetTokenInput.value ? widgetTokenInput.value.trim() : '';
+    return getMode() === 'json' ? normalizeJson(t, token) : t;
   }
 
   function runDiff() {
@@ -89,6 +137,7 @@
 
     diffOutput.innerHTML = html || '<span class="line unchanged">Нет различий</span>';
     diffStats.textContent = '−' + removedCount + ' / +' + addedCount;
+    diffComment.textContent = commentInput && commentInput.value.trim() ? commentInput.value.trim() : '';
     diffSection.classList.add('visible');
   }
 
@@ -103,9 +152,12 @@
     inputB.value = '';
     fileA.value = '';
     fileB.value = '';
+    if (commentInput) commentInput.value = '';
+    if (widgetTokenInput) widgetTokenInput.value = '';
     diffSection.classList.remove('visible');
     diffOutput.innerHTML = '';
     diffStats.textContent = '';
+    diffComment.textContent = '';
   }
 
   function readFile(fileInput, targetTextarea) {

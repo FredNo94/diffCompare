@@ -122,6 +122,58 @@ body {
   gap: 1.5rem;
 }
 
+.meta-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.meta-row.widget-token-row {
+  max-width: 420px;
+}
+
+.meta-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.comment-input,
+.token-input {
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.comment-input::placeholder,
+.token-input::placeholder {
+  color: var(--text-muted);
+}
+
+.comment-input:focus,
+.token-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.meta-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -218,8 +270,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
   font-weight: 500;
   font-size: 0.95rem;
+}
+
+.diff-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.diff-comment {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .diff-stats {
