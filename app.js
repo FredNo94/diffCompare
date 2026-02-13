@@ -1,24 +1,19 @@
 (function () {
   'use strict';
 
-  // Only initialize DOM elements if running in a browser environment
-  var inputA, inputB, fileA, fileB, btnCompare, btnClear, diffSection, diffOutput, diffStats, diffComment, commentInput, widgetTokenInput;
-
-  if (typeof document !== 'undefined') {
-    inputA = document.getElementById('inputA');
-    inputB = document.getElementById('inputB');
-    fileA = document.getElementById('fileA');
-    fileB = document.getElementById('fileB');
-    btnCompare = document.getElementById('btnCompare');
-    btnClear = document.getElementById('btnClear');
-    diffSection = document.getElementById('diffSection');
-    diffOutput = document.getElementById('diffOutput');
-    diffStats = document.getElementById('diffStats');
-    diffComment = document.getElementById('diffComment');
-    commentInputA = document.getElementById('commentA');
-    commentInputB = document.getElementById('commentB');
-    widgetTokenInput = document.getElementById('widgetToken');
-  }
+  var inputA = document.getElementById('inputA');
+  var inputB = document.getElementById('inputB');
+  var fileA = document.getElementById('fileA');
+  var fileB = document.getElementById('fileB');
+  var btnCompare = document.getElementById('btnCompare');
+  var btnClear = document.getElementById('btnClear');
+  var diffSection = document.getElementById('diffSection');
+  var diffOutput = document.getElementById('diffOutput');
+  var diffStats = document.getElementById('diffStats');
+  var diffComment = document.getElementById('diffComment');
+  var commentInputA = document.getElementById('commentA');
+  var commentInputB = document.getElementById('commentB');
+  var widgetTokenInput = document.getElementById('widgetToken');
 
   var TOKEN_KEYS = ['token', 'widgetToken', 'widget_id', 'widgetId', 'id'];
 
