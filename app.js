@@ -1,22 +1,29 @@
 (function () {
   'use strict';
 
-  var inputA = document.getElementById('inputA');
-  var inputB = document.getElementById('inputB');
-  var fileA = document.getElementById('fileA');
-  var fileB = document.getElementById('fileB');
-  var btnCompare = document.getElementById('btnCompare');
-  var btnClear = document.getElementById('btnClear');
-  var diffSection = document.getElementById('diffSection');
-  var diffOutput = document.getElementById('diffOutput');
-  var diffStats = document.getElementById('diffStats');
-  var diffComment = document.getElementById('diffComment');
-  var commentInput = document.getElementById('comment');
-  var widgetTokenInput = document.getElementById('widgetToken');
+  // Only initialize DOM elements if running in a browser environment
+  var inputA, inputB, fileA, fileB, btnCompare, btnClear, diffSection, diffOutput, diffStats, diffComment, commentInput, widgetTokenInput;
+
+  if (typeof document !== 'undefined') {
+    inputA = document.getElementById('inputA');
+    inputB = document.getElementById('inputB');
+    fileA = document.getElementById('fileA');
+    fileB = document.getElementById('fileB');
+    btnCompare = document.getElementById('btnCompare');
+    btnClear = document.getElementById('btnClear');
+    diffSection = document.getElementById('diffSection');
+    diffOutput = document.getElementById('diffOutput');
+    diffStats = document.getElementById('diffStats');
+    diffComment = document.getElementById('diffComment');
+    commentInputA = document.getElementById('commentA');
+    commentInputB = document.getElementById('commentB');
+    widgetTokenInput = document.getElementById('widgetToken');
+  }
 
   var TOKEN_KEYS = ['token', 'widgetToken', 'widget_id', 'widgetId', 'id'];
 
   function getMode() {
+    if (typeof document === 'undefined') return 'text'; // Default mode for Node.js
     return document.querySelector('input[name="mode"]:checked').value;
   }
 
@@ -73,18 +80,21 @@
   }
 
   function getTextA() {
+    if (typeof document === 'undefined') return '';
     var t = inputA.value.trim();
     var token = widgetTokenInput && widgetTokenInput.value ? widgetTokenInput.value.trim() : '';
     return getMode() === 'json' ? normalizeJson(t, token) : t;
   }
 
   function getTextB() {
+    if (typeof document === 'undefined') return '';
     var t = inputB.value.trim();
     var token = widgetTokenInput && widgetTokenInput.value ? widgetTokenInput.value.trim() : '';
     return getMode() === 'json' ? normalizeJson(t, token) : t;
   }
 
   function runDiff() {
+    if (typeof document === 'undefined') return;
     var textA = getTextA();
     var textB = getTextB();
 
@@ -137,22 +147,46 @@
 
     diffOutput.innerHTML = html || '<span class="line unchanged">Нет различий</span>';
     diffStats.textContent = '−' + removedCount + ' / +' + addedCount;
-    diffComment.textContent = commentInput && commentInput.value.trim() ? commentInput.value.trim() : '';
+    var commentA = commentInputA && commentInputA.value.trim() ? commentInputA.value.trim() : '';
+    var commentB = commentInputB && commentInputB.value.trim() ? commentInputB.value.trim() : '';
+    var commentText = '';
+    if (commentA && commentB) {
+      commentText = commentA + ' → ' + commentB;
+    } else if (commentA) {
+      commentText = commentA;
+    } else if (commentB) {
+      commentText = commentB;
+    }
+    diffComment.textContent = commentText;
     diffSection.classList.add('visible');
   }
 
   function escapeHtml(str) {
+    if (typeof document === 'undefined') {
+      // Simple HTML escaping for Node.js environment
+      return str.replace(/[&<>"']/g, function (m) {
+        return {
+          '&': '&',
+          '<': '<',
+          '>': '>',
+          '"': '"',
+          "'": '&#39;'
+        }[m];
+      });
+    }
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
   }
 
   function clearAll() {
+    if (typeof document === 'undefined') return;
     inputA.value = '';
     inputB.value = '';
     fileA.value = '';
     fileB.value = '';
-    if (commentInput) commentInput.value = '';
+    if (commentInputA) commentInputA.value = '';
+    if (commentInputB) commentInputB.value = '';
     if (widgetTokenInput) widgetTokenInput.value = '';
     diffSection.classList.remove('visible');
     diffOutput.innerHTML = '';
@@ -161,6 +195,7 @@
   }
 
   function readFile(fileInput, targetTextarea) {
+    if (typeof document === 'undefined') return;
     var file = fileInput.files && fileInput.files[0];
     if (!file) return;
     var reader = new FileReader();
@@ -170,20 +205,23 @@
     reader.readAsText(file, 'UTF-8');
   }
 
-  fileA.addEventListener('change', function () {
-    readFile(fileA, inputA);
-  });
+  if (typeof document !== 'undefined') {
+    fileA.addEventListener('change', function () {
+      readFile(fileA, inputA);
+    });
 
-  fileB.addEventListener('change', function () {
-    readFile(fileB, inputB);
-  });
+    fileB.addEventListener('change', function () {
+      readFile(fileB, inputB);
+    });
 
-  btnCompare.addEventListener('click', runDiff);
+    btnCompare.addEventListener('click', runDiff);
 
-  btnClear.addEventListener('click', clearAll);
+    btnClear.addEventListener('click', clearAll);
+  }
 
   // Drag and drop on textareas
   function setupDrop(textarea, label) {
+    if (typeof document === 'undefined') return;
     textarea.addEventListener('dragover', function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -206,14 +244,18 @@
     });
   }
 
-  setupDrop(inputA);
-  setupDrop(inputB);
+  if (typeof document !== 'undefined') {
+    setupDrop(inputA);
+    setupDrop(inputB);
+  }
 
   // Ctrl+Enter to compare
-  document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && e.key === 'Enter') {
-      e.preventDefault();
-      runDiff();
-    }
-  });
+  if (typeof document !== 'undefined') {
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        runDiff();
+      }
+    });
+  }
 })();
