@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diff Compare — сравнение аналитики</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>Diff Compare</h1>
+      <p class="subtitle">Сравнение двух вариантов (например, аналитика из Fiddler при разных настройках)</p>
+      <div class="toolbar">
+        <div class="mode-toggle">
+          <label><input type="radio" name="mode" value="text" checked> Текст</label>
+          <label><input type="radio" name="mode" value="json"> JSON</label>
+        </div>
+        <div class="actions">
+          <button type="button" id="btnCompare" class="btn btn-primary">Сравнить</button>
+          <button type="button" id="btnClear" class="btn btn-secondary">Очистить</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="inputs">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Вариант A</span>
+            <span class="panel-hint">(настройки 1)</span>
+            <label class="file-label">
+              <input type="file" id="fileA" accept=".json,.txt,application/json,text/*" hidden>
+              Загрузить файл
+            </label>
+          </div>
+          <textarea id="inputA" placeholder="Вставь сюда данные из Fiddler или загрузи файл..."></textarea>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Вариант B</span>
+            <span class="panel-hint">(настройки 2)</span>
+            <label class="file-label">
+              <input type="file" id="fileB" accept=".json,.txt,application/json,text/*" hidden>
+              Загрузить файл
+            </label>
+          </div>
+          <textarea id="inputB" placeholder="Вставь сюда данные из Fiddler или загрузи файл..."></textarea>
+        </div>
+      </section>
+
+      <section class="diff-section" id="diffSection">
+        <div class="diff-header">
+          <span>Различия</span>
+          <span class="diff-stats" id="diffStats"></span>
+        </div>
+        <div class="diff-container">
+          <div id="diffOutput" class="diff-output"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Загрузи два файла или вставь текст из Fiddler — увидишь, что изменилось между вариантами.</p>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/diff/5.1.0/diff.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
